@@ -12,6 +12,10 @@ int[] degree = new int[nbBeats];
 int[][] forceNotes = new int[nbBeats][nbInstr];
 // TODO make smaller divisions and make incoming beats an array of possible notes, then define the real note among them
 int startingCommonNotesRequired;
+int[] dOrder = {// degree importance order
+  6, 2, 5, 1, 3, 4, 0
+};
+// TODO prepare interface for parameters, forced notes, custom tonality/degrees, separate tonality/notes/subdivisions generation
 
 class Tonality {
   boolean[] notes;
@@ -104,22 +108,22 @@ void setup() {
   // TEST
   /*
   forceNotes[0][3] = 0+70;
-  forceNotes[1][3] = 2+70;
-  forceNotes[2][3] = 3+70;
-  forceNotes[3][3] = 5+70;
-  forceNotes[4][3] = 7+70;
-  forceNotes[5][3] = 3+70;
-  forceNotes[6][3] = 7+70;
-  forceNotes[7][3] = 7+70;
-  forceNotes[8][3] = 6+70;
-  forceNotes[9][3] = 2+70;
-  forceNotes[10][3] = 6+70;
-  forceNotes[11][3] = 6+70;
-  forceNotes[12][3] = 5+70;
-  forceNotes[13][3] = 1+70;
-  forceNotes[14][3] = 5+70;
-  forceNotes[15][3] = 5+70;
-  */
+   forceNotes[1][3] = 2+70;
+   forceNotes[2][3] = 3+70;
+   forceNotes[3][3] = 5+70;
+   forceNotes[4][3] = 7+70;
+   forceNotes[5][3] = 3+70;
+   forceNotes[6][3] = 7+70;
+   forceNotes[7][3] = 7+70;
+   forceNotes[8][3] = 6+70;
+   forceNotes[9][3] = 2+70;
+   forceNotes[10][3] = 6+70;
+   forceNotes[11][3] = 6+70;
+   forceNotes[12][3] = 5+70;
+   forceNotes[13][3] = 1+70;
+   forceNotes[14][3] = 5+70;
+   forceNotes[15][3] = 5+70;
+   */
   for (int i=0;i<nbBeats;i++) {
     for (int j=0;j<nbInstr;j++) {
       notes[i][j] = forceNotes[i][j];
@@ -177,15 +181,12 @@ void setup() {
         }
         // compute a score based on degrees
       }
-      int[] order = {
-        6, 2, 5, 1, 3, 4, 0
-      };
       int thisDegreeScore=0;      
       for (int b=thisBestStart;b<thisBestEnd;b++) {
         for (int i=0;i<nbInstr;i++) {          
           if (forceNotes[b][i]!=-1) {
-            for (int j=0;j<order.length;j++) {
-              if (forceNotes[b][i]%nbPNotes==thisTonality.getNoteNumber(order[j])) thisDegreeScore+=j+1;
+            for (int j=0;j<dOrder.length;j++) {
+              if (forceNotes[b][i]%nbPNotes==thisTonality.getNoteNumber(dOrder[j])) thisDegreeScore+=j+1;
             }
           }
         }
@@ -250,10 +251,7 @@ void setup() {
     }
     // select the most common degree
     for (int d=0;d<nbPDegrees;d++) {
-      int[] order = {
-        6, 2, 5, 1, 3, 4, 0
-      };
-      degree[b] = (availableDegrees[order[d]])?order[d]:degree[b];
+      degree[b] = (availableDegrees[dOrder[d]])?dOrder[d]:degree[b];
     }
     if (b>0) {
       // if the tonality changes 
@@ -302,7 +300,7 @@ void setup() {
         }
       }
       for (int i=1;i<nbInstr;i++) {
-        // admit only low notes if they that have a strong harmonic relation with the bass (below A2=33 if 7 or 12)
+        // admit low notes only if they that have a strong harmonic relation with the bass (below A2=33 if 7 or 12)
         if (possibleChords.get(c)[i]<33) {
           int thisBassInterval = possibleChords.get(c)[i]-possibleChords.get(c)[0];
           if (thisBassInterval%nbPNotes!=0&&thisBassInterval%nbPNotes!=7) {
@@ -335,8 +333,8 @@ void setup() {
                     allow=false;
                     causeForChordBanning[6]++;
                   }
-                } 
-                else {// if week degree
+                }
+                else {// if weak degree
                   if (abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if the soprano is disjoint
                     allow=false;
                     causeForChordBanning[6]++;
@@ -416,7 +414,7 @@ void setup() {
         }
       }
       // TODO lower ranking if wrong notes are duplicated
-      // TODO lower ranking if no 3rd in th chord      
+      // TODO lower ranking if no 3rd in the chord      
       // TODO favor notes that have not been seen much so far in the song
       // TODO higher ranking if the bass makes a nice drop (fundamental or first)
       // TODO favor inverse melodic contours bewteen voices
