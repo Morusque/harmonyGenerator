@@ -1,5 +1,5 @@
 
-int nbBeats = 24;
+int nbBeats = 32;
 int nbInstr = 4;
 int nbPTotalNotes=128;
 int nbPNotes = 12;// C C# D D# E F F# G G# A A# B
@@ -16,6 +16,8 @@ int[] dOrder = {// degree importance order
   6, 2, 5, 1, 3, 4, 0
 };
 // TODO prepare interface for parameters, forced notes, custom tonality/degrees, separate tonality/notes/subdivisions generation
+
+int randomInstr = floor(random(4));// <- testing purpose
 
 class Tonality {
   boolean[] notes;
@@ -92,7 +94,12 @@ void setup() {
   instruments[0] = new Instrument(24, 70, 12);// cello
   instruments[1] = new Instrument(36, 75, 19);// viola
   instruments[2] = new Instrument(43, 93, 12);// violin
-  instruments[3] = new Instrument(43, 93, 12);// violin  
+  instruments[3] = new Instrument(43, 93, 12);// violin
+  /*
+  for (int j=0; j<nbInstr; j++) {
+   instruments[j] = new Instrument(20+j*7, 30+j*7, 20-j*2);
+   }
+   */
   // define starting notes
   for (int i=0; i<nbBeats; i++) {
     tonality[i] = new Tonality();
@@ -100,36 +107,43 @@ void setup() {
       forceNotes[i][j]=-1;
     }
     // TEST
-    // forceNotes[i][3] = i==0?floor(random(35)+63):constrain(floor(forceNotes[i-1][3]+random(-3, 3)), 43, 93);
-    // forceNotes[i][0] = i==0?floor(random(50)+24):constrain(floor(forceNotes[i-1][0]+random(-3, 3)), 24, 70);
-    // forceNotes[i][2] = i==0?floor(random(40)+43):constrain(floor(forceNotes[i-1][2]+random(-3, 3)), 43, 93);
-    // forceNotes[i][2] = i==0?floor(65):constrain(floor(forceNotes[i-1][2]-1), 43, 93);
+    if (random(10)<1) randomInstr = floor(random(4));
+    int lastForcedNote=-1;
+    for (int i2=i-1; i2>=0; i2--) {
+      if (forceNotes[i2][randomInstr]!=-1) {
+        lastForcedNote=forceNotes[i2][randomInstr];
+        break;
+      }
+    }
+    forceNotes[i][randomInstr] = (i==0||lastForcedNote==-1)?floor((instruments[randomInstr].lowestNoteIncl+instruments[randomInstr].highestNoteExcl)/2):constrain(floor(lastForcedNote+random(-4, 4)), instruments[randomInstr].lowestNoteIncl, instruments[randomInstr].highestNoteExcl);
   }
   // TEST
-  forceNotes[0][3] = 0+46;
-  forceNotes[1][3] = 5+46;
-  forceNotes[2][3] = 7+46;
-  forceNotes[3][3] = 12+46;
-  forceNotes[4][3] = 16+46;
-  forceNotes[5][3] = 16+46;
-  forceNotes[6][3] = 16+46;
-  forceNotes[7][3] = 14+46;
-  forceNotes[8][3] = 12+46;
-  forceNotes[9][3] = 9+46;
-  forceNotes[10][3] = 6+46;
-  forceNotes[11][3] = 14+46;
-  forceNotes[12][3] = 11+46;
-  forceNotes[13][3] = 7+46;
-  forceNotes[14][3] = 4+46;
-  forceNotes[15][3] = 12+46;
-  forceNotes[16][3] = 9+46;
-  forceNotes[17][3] = 6+46;
-  forceNotes[18][3] = 3+46;
-  forceNotes[19][3] = -1+46;
-  forceNotes[20][3] = 4+46;
-  forceNotes[21][3] = 4+46;
-  forceNotes[22][3] = 4+46;
-  forceNotes[23][3] = 4+46;
+  /*
+  forceNotes[0][0] = 6+24;
+   forceNotes[1][0] = 5+24;
+   forceNotes[2][0] = 12+24;
+   forceNotes[3][0] = 21+24;
+   forceNotes[4][0] = 7+24;
+   forceNotes[5][0] = 14+24;
+   forceNotes[6][0] = 22+24;
+   forceNotes[7][0] = 9+24;
+   forceNotes[8][0] = 17+24;
+   forceNotes[9][0] = 12+24;
+   forceNotes[10][0] = 10+24;
+   forceNotes[11][0] = 17+24;
+   forceNotes[12][0] = 24+24;
+   forceNotes[13][0] = 12+24;
+   forceNotes[14][0] = 17+24;
+   forceNotes[15][0] = 19+24;
+   forceNotes[16][0] = 16+24;
+   forceNotes[17][0] = 19+24;
+   forceNotes[18][0] = 13+24;
+   forceNotes[19][0] = 14+24;
+   forceNotes[20][0] = 21+24;
+   forceNotes[21][0] = 29+24;
+   forceNotes[22][0] = 28+24;
+   forceNotes[23][0] = 26+24;
+   */
   for (int i=0; i<nbBeats; i++) {
     for (int j=0; j<nbInstr; j++) {
       notes[i][j] = forceNotes[i][j];
@@ -391,6 +405,9 @@ void setup() {
           if (possibleChords.get(c)[i]%nbPNotes==possibleChords.get(c)[j]%nbPNotes) scores[c]-=3;
         }
       }
+      // lower ranking if very small top interval
+      if (abs(possibleChords.get(c)[nbInstr-1]-possibleChords.get(c)[nbInstr-2])<2) scores[c]--;
+      if (abs(possibleChords.get(c)[nbInstr-1]-possibleChords.get(c)[nbInstr-2])<3) scores[c]--;
       // after first chord 
       if (b>0) {
         // higher ranking if smooth melodic contour
@@ -465,15 +482,15 @@ void setup() {
   saveStrings("textExp.txt", textExp);
   // export midi file
   // requires a copyrighted piece of code, not included in repository
-  /*
+  // if that part doesn't work, comment from here --------------------
   MidiFile mf = new MidiFile();
   mf.progChange(48);
   for (int i=0; i<nbBeats; i++) {
     for (int j=0; j<nbInstr; j++) {
-      mf.noteOn (j==0?1:0, notes[i][j], 80);
+      mf.noteOn (j==0?1:0, notes[i][j]+12, 80);
     }
     for (int j=0; j<nbInstr; j++) {
-      mf.noteOff (j==0?15:0, notes[i][j]);
+      mf.noteOff (j==0?15:0, notes[i][j]+12);
     }
   }
   try {
@@ -482,7 +499,7 @@ void setup() {
   catch (Exception e) {
     println(e.toString());
   }
-  */
+  // to here --------------------------------------------------------
 }
 
 class Instrument {
@@ -561,7 +578,6 @@ void fillWithAllPossibleChords(ArrayList<int[]> possibleChords, int[] currentCho
     if (thisInstrument<currentChord.length-1) {
       fillWithAllPossibleChords(possibleChords, chordModel, instruments, forceNotes);
     } else {
-
       possibleChords.add(chordModel);
     }
   }
