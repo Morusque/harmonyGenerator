@@ -1,5 +1,5 @@
 
-int nbBeats = 16;
+int nbBeats = 24;
 int nbInstr = 4;
 int nbPTotalNotes=128;
 int nbPNotes = 12;// C C# D D# E F F# G G# A A# B
@@ -23,7 +23,7 @@ class Tonality {
   int mode;
   Tonality() {
     notes = new boolean[nbPNotes];
-    for (int b=0;b<nbPNotes;b++) notes[b]=false;
+    for (int b=0; b<nbPNotes; b++) notes[b]=false;
     base = -1;
     mode = -1;
   }
@@ -39,7 +39,7 @@ class Tonality {
   }
   String toText() {
     int t2=0;
-    for (int i=0;i<nbPNotes;i++) t2+=notes[i]?pow(2, i):0;
+    for (int i=0; i<nbPNotes; i++) t2+=notes[i]?pow(2, i):0;
     if (t2==2741) return "C M";
     if (t2==1387) return "C#M";
     if (t2==2774) return "D M";
@@ -68,7 +68,7 @@ class Tonality {
   }
   boolean[] getChordForDegree(int d) {
     boolean[] result = new boolean[nbPNotes];
-    for (int i=0;i<nbPNotes;i++) result[i]=false;
+    for (int i=0; i<nbPNotes; i++) result[i]=false;
     if (base==-1||mode==-1) return result;
     result[getNoteNumber(d)]=true;
     result[getNoteNumber(d+2)]=true;
@@ -94,38 +94,44 @@ void setup() {
   instruments[2] = new Instrument(43, 93, 12);// violin
   instruments[3] = new Instrument(43, 93, 12);// violin  
   // define starting notes
-  for (int i=0;i<nbBeats;i++) {
+  for (int i=0; i<nbBeats; i++) {
     tonality[i] = new Tonality();
-    for (int j=0;j<nbInstr;j++) {
+    for (int j=0; j<nbInstr; j++) {
       forceNotes[i][j]=-1;
     }
     // TEST
-    forceNotes[i][3] = i==0?floor(random(35)+63):constrain(floor(forceNotes[i-1][3]+random(-3, 3)), 43, 93);
+    // forceNotes[i][3] = i==0?floor(random(35)+63):constrain(floor(forceNotes[i-1][3]+random(-3, 3)), 43, 93);
     // forceNotes[i][0] = i==0?floor(random(50)+24):constrain(floor(forceNotes[i-1][0]+random(-3, 3)), 24, 70);
     // forceNotes[i][2] = i==0?floor(random(40)+43):constrain(floor(forceNotes[i-1][2]+random(-3, 3)), 43, 93);
     // forceNotes[i][2] = i==0?floor(65):constrain(floor(forceNotes[i-1][2]-1), 43, 93);
   }
   // TEST
-  /*
-  forceNotes[0][3] = 0+70;
-   forceNotes[1][3] = 2+70;
-   forceNotes[2][3] = 3+70;
-   forceNotes[3][3] = 5+70;
-   forceNotes[4][3] = 7+70;
-   forceNotes[5][3] = 3+70;
-   forceNotes[6][3] = 7+70;
-   forceNotes[7][3] = 7+70;
-   forceNotes[8][3] = 6+70;
-   forceNotes[9][3] = 2+70;
-   forceNotes[10][3] = 6+70;
-   forceNotes[11][3] = 6+70;
-   forceNotes[12][3] = 5+70;
-   forceNotes[13][3] = 1+70;
-   forceNotes[14][3] = 5+70;
-   forceNotes[15][3] = 5+70;
-   */
-  for (int i=0;i<nbBeats;i++) {
-    for (int j=0;j<nbInstr;j++) {
+  forceNotes[0][3] = 0+46;
+  forceNotes[1][3] = 5+46;
+  forceNotes[2][3] = 7+46;
+  forceNotes[3][3] = 12+46;
+  forceNotes[4][3] = 16+46;
+  forceNotes[5][3] = 16+46;
+  forceNotes[6][3] = 16+46;
+  forceNotes[7][3] = 14+46;
+  forceNotes[8][3] = 12+46;
+  forceNotes[9][3] = 9+46;
+  forceNotes[10][3] = 6+46;
+  forceNotes[11][3] = 14+46;
+  forceNotes[12][3] = 11+46;
+  forceNotes[13][3] = 7+46;
+  forceNotes[14][3] = 4+46;
+  forceNotes[15][3] = 12+46;
+  forceNotes[16][3] = 9+46;
+  forceNotes[17][3] = 6+46;
+  forceNotes[18][3] = 3+46;
+  forceNotes[19][3] = -1+46;
+  forceNotes[20][3] = 4+46;
+  forceNotes[21][3] = 4+46;
+  forceNotes[22][3] = 4+46;
+  forceNotes[23][3] = 4+46;
+  for (int i=0; i<nbBeats; i++) {
+    for (int j=0; j<nbInstr; j++) {
       notes[i][j] = forceNotes[i][j];
     }
   }
@@ -139,19 +145,18 @@ void setup() {
     Tonality bestTonality = new Tonality();
     boolean solutionFound = false;
     // go through all existing tonalities
-    for (int tonalityIndex = 0 ; tonalityIndex < nbPNotes*nbPModes ; tonalityIndex++) {
+    for (int tonalityIndex = 0; tonalityIndex < nbPNotes*nbPModes; tonalityIndex++) {
       Tonality thisTonality = generateTonality(tonalityIndex%nbPNotes, floor(tonalityIndex/nbPNotes));
       // for this tonality search for the longest run
       int thisBestStart = -1;
       int thisBestEnd = -1;   
       int thisStart=-1;
-      for (int b=0;b<nbBeats+1;b++) {
+      for (int b=0; b<nbBeats+1; b++) {
         if (thisStart==-1) thisStart=b;
         boolean goOn = true;
         if (b==nbBeats) {// if this was the last beat
           goOn = false;
-        }
-        else {
+        } else {
           // don't go on if this beat is already defined
           goOn &= (tonality[b].base==-1);
           // don't go on if tonality does not match
@@ -161,7 +166,7 @@ void setup() {
             if (b<nbBeats-1) goOn &= (notes[b+1][nbInstr-1]%nbPNotes==thisTonality.getNoteNumber(0));
           }
           // check that a new tonality is introduced by notes that allow V
-          if (thisStart==b) goOn &= checkPoolMatch(thisTonality.getChordForDegree(4), notes[b]);
+          if (thisStart==b && b>0) goOn &= checkPoolMatch(thisTonality.getChordForDegree(4), notes[b]);
         }
         if (!goOn) {
           // update the solution if this one is best and the length is not zero
@@ -182,10 +187,10 @@ void setup() {
         // compute a score based on degrees
       }
       int thisDegreeScore=0;      
-      for (int b=thisBestStart;b<thisBestEnd;b++) {
-        for (int i=0;i<nbInstr;i++) {          
+      for (int b=thisBestStart; b<thisBestEnd; b++) {
+        for (int i=0; i<nbInstr; i++) {          
           if (forceNotes[b][i]!=-1) {
-            for (int j=0;j<dOrder.length;j++) {
+            for (int j=0; j<dOrder.length; j++) {
               if (forceNotes[b][i]%nbPNotes==thisTonality.getNoteNumber(dOrder[j])) thisDegreeScore+=j+1;
             }
           }
@@ -197,8 +202,7 @@ void setup() {
         bestEnd=thisBestEnd;
         bestTonality=thisTonality;
         bestDegreeScore=thisDegreeScore;
-      } 
-      else if ((bestEnd-bestStart)==(thisBestEnd-thisBestStart)) {
+      } else if ((bestEnd-bestStart)==(thisBestEnd-thisBestStart)) {
         if (thisDegreeScore>=bestDegreeScore) {
           bestStart=thisBestStart;
           bestEnd=thisBestEnd;
@@ -209,15 +213,15 @@ void setup() {
     }
     // apply the defined tonality
     if (solutionFound) {      
-      for (int b=bestStart;b<bestEnd;b++) {
-        for (int i=0;i<nbPNotes;i++) {
+      for (int b=bestStart; b<bestEnd; b++) {
+        for (int i=0; i<nbPNotes; i++) {
           tonality[b] = new Tonality(bestTonality);
         }
       }
     }
     // update toBeDefined
     toBeDefined=0;
-    for (int b=0;b<nbBeats;b++) if (tonality[b].base==-1) toBeDefined++;
+    for (int b=0; b<nbBeats; b++) if (tonality[b].base==-1) toBeDefined++;
     // if no other solution available allow for more tonal jumps then go anyway
     if (!solutionFound) {
       if (commonNotesRequired>0) commonNotesRequired--;
@@ -226,21 +230,21 @@ void setup() {
   }
   // TODO try to replace tonalities by other that better match their neighbors
   // find matching degrees
-  for (int b=0;b<nbBeats;b++) {
+  for (int b=0; b<nbBeats; b++) {
     degree[b]=-1;
     boolean[] availableDegrees = new boolean[nbPDegrees];
-    for (int d=0;d<nbPDegrees;d++) {
+    for (int d=0; d<nbPDegrees; d++) {
       availableDegrees[d]=false;
       boolean[] theseNotes = tonality[b].getChordForDegree(d);
       if (checkPoolMatch(theseNotes, notes[b])) availableDegrees[d]=true;
     }
     // check that the lowest note is matching
     int lowestNote=-1;
-    for (int i=0;i<nbInstr;i++) if (lowestNote==-1||(notes[b][i]<lowestNote&&notes[b][i]!=-1)) lowestNote = notes[b][i];
+    for (int i=0; i<nbInstr; i++) if (lowestNote==-1||(notes[b][i]<lowestNote&&notes[b][i]!=-1)) lowestNote = notes[b][i];
     // if the lowest instrument isn't defined, consider the lowest note isn't defined
     if (notes[b][0]==-1) lowestNote=-1;
     if (lowestNote!=-1) {
-      for (int i=0;i<nbPDegrees;i++) {
+      for (int i=0; i<nbPDegrees; i++) {
         if (availableDegrees[i]) {
           boolean matchingStatusFound = false;
           if (lowestNote%nbPNotes==tonality[b].getNoteNumber(i)) matchingStatusFound=true;
@@ -250,7 +254,7 @@ void setup() {
       }
     }
     // select the most common degree
-    for (int d=0;d<nbPDegrees;d++) {
+    for (int d=0; d<nbPDegrees; d++) {
       degree[b] = (availableDegrees[dOrder[d]])?dOrder[d]:degree[b];
     }
     if (b>0) {
@@ -263,20 +267,20 @@ void setup() {
     // TODO ban configuration if the bass does not fit with the first drop of this degree
   }
   // TODO make separate reusable functions for bans, and use them one after each other while there is still some possible chords
-  for (int b=0;b<nbBeats;b++) {// for each beat
+  for (int b=0; b<nbBeats; b++) {// for each beat
     println("generating chords for beat "+b);
     // define all possible combinations of notes
     ArrayList<int[]> possibleChords = new ArrayList<int[]>();
     int[] chordModel = new int[nbInstr];
-    for (int i=0;i<chordModel.length;i++) chordModel[i]=-1;
+    for (int i=0; i<chordModel.length; i++) chordModel[i]=-1;
     fillWithAllPossibleChords(possibleChords, chordModel, instruments, forceNotes[b]);
     println(possibleChords.size());
     int[] causeForChordBanning = new int[9];// log causes for wrong chords for debugging purposes
-    for (int i=0;i<causeForChordBanning.length;i++) causeForChordBanning[i]=0;        
-    for (int c=0;c<possibleChords.size();c++) {
+    for (int i=0; i<causeForChordBanning.length; i++) causeForChordBanning[i]=0;        
+    for (int c=0; c<possibleChords.size (); c++) {
       boolean allow = true;
       // ban if one of the intervals is too large
-      for (int i=1;i<nbInstr;i++) {
+      for (int i=1; i<nbInstr; i++) {
         if (possibleChords.get(c)[i]-possibleChords.get(c)[i-1]>instruments[i].maxInterval) {
           allow=false;
           causeForChordBanning[0]++;
@@ -289,8 +293,8 @@ void setup() {
           causeForChordBanning[1]++;
         }
       }
-      for (int i=0;i<nbInstr-1;i++) {
-        for (int j=i+1;j<nbInstr;j++) {
+      for (int i=0; i<nbInstr-1; i++) {
+        for (int j=i+1; j<nbInstr; j++) {
           // ban if there is a #9 or positive drop of it somewhere
           int thisInterval = possibleChords.get(c)[i]-possibleChords.get(c)[j];
           if (thisInterval%nbPNotes==1&&thisInterval>1) {
@@ -299,7 +303,7 @@ void setup() {
           }
         }
       }
-      for (int i=1;i<nbInstr;i++) {
+      for (int i=1; i<nbInstr; i++) {
         // admit low notes only if they that have a strong harmonic relation with the bass (below A2=33 if 7 or 12)
         if (possibleChords.get(c)[i]<33) {
           int thisBassInterval = possibleChords.get(c)[i]-possibleChords.get(c)[0];
@@ -311,15 +315,15 @@ void setup() {
       }
       // ban if no fundamental
       boolean fundamentalFound = false;
-      for (int i=1;i<nbInstr;i++) if (possibleChords.get(c)[i]%nbPNotes==tonality[b].getNoteNumber(degree[b])) fundamentalFound = true; 
+      for (int i=1; i<nbInstr; i++) if (possibleChords.get(c)[i]%nbPNotes==tonality[b].getNoteNumber(degree[b])) fundamentalFound = true; 
       if (!fundamentalFound) {
         allow=false;
         causeForChordBanning[4]++;
       }
       if (b>0) {
         // check the relation with the previous chord
-        for (int i=0;i<nbInstr-1;i++) {
-          for (int j=i+1;j<nbInstr;j++) {
+        for (int i=0; i<nbInstr-1; i++) {
+          for (int j=i+1; j<nbInstr; j++) {
             int thisInterval = possibleChords.get(c)[j]-possibleChords.get(c)[i];
             if (thisInterval%nbPNotes==0||thisInterval%nbPNotes==7) {// if this interval is a drop of a 5th or 8ve
               if (notes[b-1][j]!=possibleChords.get(c)[j] && (notes[b-1][j]-notes[b-1][i])==thisInterval) {// ban if parallel 5th or 8ves
@@ -333,15 +337,13 @@ void setup() {
                     allow=false;
                     causeForChordBanning[6]++;
                   }
-                }
-                else {// if weak degree
+                } else {// if weak degree
                   if (abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if the soprano is disjoint
                     allow=false;
                     causeForChordBanning[6]++;
                   }
                 }
-              } 
-              else {// if other than bass and soprano
+              } else {// if other than bass and soprano
                 if (abs(notes[b-1][i]-possibleChords.get(c)[i])>2&&abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if both instruments are disjoint
                   allow=false;
                   causeForChordBanning[6]++;
@@ -360,7 +362,7 @@ void setup() {
         }
       }
       // ban if notes don't belong to the tonality
-      for (int i=0;i<nbInstr;i++) {
+      for (int i=0; i<nbInstr; i++) {
         if (!tonality[b].notes[possibleChords.get(c)[i]%nbPNotes]) {
           allow=false;
           causeForChordBanning[8]++;
@@ -373,43 +375,43 @@ void setup() {
     }
     println(possibleChords.size());
     int[] scores = new int[possibleChords.size()];
-    for (int c=0;c<possibleChords.size();c++) {
+    for (int c=0; c<possibleChords.size (); c++) {
       // compute a score for a given chord
       scores[c]=0;
       // higher ranking if notes are common for this chord
-      for (int i=0;i<nbInstr;i++) {
+      for (int i=0; i<nbInstr; i++) {
         // check common chord notes for this degree
         // TODO add less common notes as well 
         if (tonality[b].getChordForDegree(degree[b])[possibleChords.get(c)[i]%nbPNotes]) scores[c]+=5;// TODO tweak value
         else scores[c]-=5;
       }
       // lower ranking if duplicate notes
-      for (int i=0;i<nbInstr-1;i++) {
-        for (int j=i+1;j<nbInstr;j++) {
+      for (int i=0; i<nbInstr-1; i++) {
+        for (int j=i+1; j<nbInstr; j++) {
           if (possibleChords.get(c)[i]%nbPNotes==possibleChords.get(c)[j]%nbPNotes) scores[c]-=3;
         }
       }
       // after first chord 
       if (b>0) {
         // higher ranking if smooth melodic contour
-        for (int i=0;i<nbInstr-1;i++) {
+        for (int i=0; i<nbInstr-1; i++) {
           scores[c] -= ceil((float)abs(possibleChords.get(c)[i]-notes[b-1][i])/5);// TODO tweak division
         }
         // favor other drops if the tonality is static
         if (tonality[b-1].mode==tonality[b].mode) {
-          for (int i=0;i<nbInstr;i++) {
+          for (int i=0; i<nbInstr; i++) {
             if (notes[b-1][i]!=possibleChords.get(c)[i]) scores[c]++;
             else scores[c]--;
           }
         }
         // lower ranking if leading !-> tonic
-        for (int i=0;i<nbInstr;i++) {
+        for (int i=0; i<nbInstr; i++) {
           if (notes[b-1][i]%nbPNotes==tonality[b].getNoteNumber(6) && possibleChords.get(c)[i]%nbPNotes!=tonality[b].getNoteNumber(0)) scores[c]-=5;// TODO tweak value
         }
       }
       // higher ranking if higher intervals
-      for (int i=0;i<nbInstr-1;i++) {
-        for (int j=i+1;j<nbInstr;j++) {
+      for (int i=0; i<nbInstr-1; i++) {
+        for (int j=i+1; j<nbInstr; j++) {
           scores[c] += floor((float)(possibleChords.get(c)[j]-possibleChords.get(c)[i])/4);// TODO tweak division
         }
       }
@@ -422,28 +424,28 @@ void setup() {
     }
     // increase all the scores to at least a 0 value
     int lowestScore = 0;
-    for (int i=0;i<scores.length;i++) lowestScore = min(scores[i], lowestScore);
-    for (int i=0;i<scores.length;i++) scores[i] -= lowestScore;    
+    for (int i=0; i<scores.length; i++) lowestScore = min(scores[i], lowestScore);
+    for (int i=0; i<scores.length; i++) scores[i] -= lowestScore;    
     // choose the chord with highest score
     int chosenChord = -1;
     int bestScore = -1;
-    for (int c=0;c<possibleChords.size();c++) {
+    for (int c=0; c<possibleChords.size (); c++) {
       if (scores[c]>bestScore) {
         chosenChord=c;
         bestScore=scores[c];
       }
     }
-    for (int j=0;j<nbInstr;j++) {
+    for (int j=0; j<nbInstr; j++) {
       if (chosenChord>=0) notes[b][j] = possibleChords.get(chosenChord)[j];
     }
-    for (int i=0;i<causeForChordBanning.length;i++) println("banning for cause "+i+" : "+causeForChordBanning[i]);
+    for (int i=0; i<causeForChordBanning.length; i++) println("banning for cause "+i+" : "+causeForChordBanning[i]);
   }
   // TODO add more subdivisions, then nonchord notes and try to justify them
   // export text file
   String[] textExp = new String[nbInstr+2];
-  for (int j=0;j<nbInstr;j++) {
+  for (int j=0; j<nbInstr; j++) {
     textExp[nbInstr-(j+1)] = "";
-    for (int i=0;i<nbBeats;i++) {
+    for (int i=0; i<nbBeats; i++) {
       String txtNote ="";
       txtNote += noteToText(notes[i][j]);
       if (notes[i][j]==-1) txtNote+="___";
@@ -451,26 +453,26 @@ void setup() {
     }
   }
   textExp[nbInstr] = "";
-  for (int i=0;i<nbBeats;i++) {
+  for (int i=0; i<nbBeats; i++) {
     String thisT = tonality[i].toText();
     textExp[nbInstr] += thisT + " | ";
   }
   textExp[nbInstr+1] = "";
-  for (int i=0;i<nbBeats;i++) {
+  for (int i=0; i<nbBeats; i++) {
     textExp[nbInstr+1] += nf(degree[i]+1, 3) + " | ";
   }
-  for (int i=0;i<textExp.length;i++) println(textExp[i]);
+  for (int i=0; i<textExp.length; i++) println(textExp[i]);
   saveStrings("textExp.txt", textExp);
   // export midi file
   // requires a copyrighted piece of code, not included in repository
   /*
   MidiFile mf = new MidiFile();
   mf.progChange(48);
-  for (int i=0;i<nbBeats;i++) {
-    for (int j=0;j<nbInstr;j++) {
+  for (int i=0; i<nbBeats; i++) {
+    for (int j=0; j<nbInstr; j++) {
       mf.noteOn (j==0?1:0, notes[i][j], 80);
     }
-    for (int j=0;j<nbInstr;j++) {
+    for (int j=0; j<nbInstr; j++) {
       mf.noteOff (j==0?15:0, notes[i][j]);
     }
   }
@@ -497,11 +499,11 @@ class Instrument {
 Tonality generateTonality(int note, int mode) {
   boolean[] tonality = new boolean[nbPNotes];
   boolean[] modeNotes = new boolean[nbPNotes];
-  for (int i=0;i<nbPNotes;i++) {
+  for (int i=0; i<nbPNotes; i++) {
     if (mode==0) modeNotes[i] = (i==0||i==2||i==4||i==5||i==7||i==9||i==11);
     if (mode==1) modeNotes[i] = (i==0||i==2||i==3||i==5||i==7||i==8||i==11);
   }
-  for (int i=0;i<nbPNotes;i++) {
+  for (int i=0; i<nbPNotes; i++) {
     tonality[i] = modeNotes[(i-note+nbPNotes)%nbPNotes];
   }
   return new Tonality(tonality, note, mode);
@@ -510,7 +512,7 @@ Tonality generateTonality(int note, int mode) {
 boolean checkPoolMatch(boolean[] pool, int[] notes) {
   // return true if the notes belong to the pool
   boolean result = true;
-  for (int i=0;i<notes.length;i++) {
+  for (int i=0; i<notes.length; i++) {
     if (notes[i]!=-1) result &= pool[notes[i]%nbPNotes];
   }
   return result;
@@ -518,7 +520,7 @@ boolean checkPoolMatch(boolean[] pool, int[] notes) {
 
 int commonNotes(boolean[] a, boolean[] b) {
   int result=0;
-  for (int i=0;i<min(a.length,b.length);i++) if (a[i]&&b[i]) result++;
+  for (int i=0; i<min (a.length, b.length); i++) if (a[i]&&b[i]) result++;
   return result;
 }
 
@@ -541,7 +543,7 @@ String noteToText(int n) {
 
 void fillWithAllPossibleChords(ArrayList<int[]> possibleChords, int[] currentChord, Instrument[] instruments, int[] forceNotes) {
   int thisInstrument=-1;
-  for (int i=0;i<currentChord.length && thisInstrument==-1;i++) if (currentChord[i]==-1) thisInstrument=i;
+  for (int i=0; i<currentChord.length && thisInstrument==-1; i++) if (currentChord[i]==-1) thisInstrument=i;
   int lowestNote=instruments[thisInstrument].lowestNoteIncl;
   int highestNote=min(instruments[thisInstrument].highestNoteExcl, nbPTotalNotes);
   if (thisInstrument>0) {
@@ -552,14 +554,13 @@ void fillWithAllPossibleChords(ArrayList<int[]> possibleChords, int[] currentCho
     lowestNote = max(lowestNote, forceNotes[thisInstrument]);
     highestNote = min(highestNote, forceNotes[thisInstrument]+1);
   }
-  for (int n=lowestNote;n<highestNote;n++) {
+  for (int n=lowestNote; n<highestNote; n++) {
     currentChord[thisInstrument]=n;
     int[] chordModel = new int[currentChord.length];
-    for (int i=0;i<chordModel.length;i++) chordModel[i]=currentChord[i];
+    for (int i=0; i<chordModel.length; i++) chordModel[i]=currentChord[i];
     if (thisInstrument<currentChord.length-1) {
       fillWithAllPossibleChords(possibleChords, chordModel, instruments, forceNotes);
-    } 
-    else {
+    } else {
 
       possibleChords.add(chordModel);
     }
