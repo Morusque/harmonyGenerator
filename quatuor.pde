@@ -1,5 +1,5 @@
 
-int nbBeats = 16;
+int nbBeats = 64;
 int nbInstr = 4;
 int nbPTotalNotes=128;
 int nbPNotes = 12;// C C# D D# E F F# G G# A A# B
@@ -92,17 +92,17 @@ class Tonality {
 void setup() {
   // define instruments
   instruments[0] = new Instrument(24, 70, 12);// cello
-  instruments[1] = new Instrument(36, 75, 19);// viola
-  instruments[2] = new Instrument(43, 93, 12);// violin
-  instruments[3] = new Instrument(43, 93, 12);// violin
-  /*
+   instruments[1] = new Instrument(36, 75, 19);// viola
+   instruments[2] = new Instrument(43, 93, 12);// violin
+   instruments[3] = new Instrument(43, 93, 12);// violin
+   /*
   instruments[0] = new Instrument(10, 50, 24);
-   instruments[1] = new Instrument(20, 60, 19);
-   instruments[2] = new Instrument(30, 70, 12);
-   instruments[3] = new Instrument(35, 75, 10);
-   instruments[4] = new Instrument(40, 80, 7);
-   instruments[5] = new Instrument(45, 85, 6);
-   */
+  instruments[1] = new Instrument(20, 60, 19);
+  instruments[2] = new Instrument(30, 70, 12);
+  instruments[3] = new Instrument(35, 75, 10);
+  instruments[4] = new Instrument(40, 80, 7);
+  instruments[5] = new Instrument(45, 85, 6);
+  */
   // for (int j=0; j<nbInstr; j++) instruments[j] = new Instrument(20+j*7, 30+j*7, 20-j*2);
   // define starting notes
   for (int i=0; i<nbBeats; i++) {
@@ -292,8 +292,19 @@ void setup() {
     int[] chordModel = new int[nbInstr];
     for (int i=0; i<chordModel.length; i++) chordModel[i]=-1;
     fillWithAllPossibleChords(possibleChords, chordModel, instruments, forceNotes[b]);
-    println(possibleChords.size());
+    println("there are "+possibleChords.size()+" possible combinations of notes");
     int[] causeForChordBanning = new int[9];// log causes for wrong chords for debugging purposes
+    String[] banningCauseStr = {
+      "large interval", 
+      "wrong bass", 
+      "#9", 
+      "harmonic limit", 
+      "no fundamental", 
+      "parallel 5th/8ve", 
+      "direct movements", 
+      "unresolved leading note", 
+      "notes outside of the tonality"
+    };
     for (int i=0; i<causeForChordBanning.length; i++) causeForChordBanning[i]=0;        
     for (int c=0; c<possibleChords.size (); c++) {
       boolean allow = true;
@@ -391,7 +402,7 @@ void setup() {
         c--;
       }
     }
-    println(possibleChords.size());
+    println("after banning forbidden chords, "+possibleChords.size()+" of them remain");
     int[] scores = new int[possibleChords.size()];
     for (int c=0; c<possibleChords.size (); c++) {
       // compute a score for a given chord
@@ -459,7 +470,7 @@ void setup() {
     for (int j=0; j<nbInstr; j++) {
       if (chosenChord>=0) notes[b][j] = possibleChords.get(chosenChord)[j];
     }
-    for (int i=0; i<causeForChordBanning.length; i++) println("banning for cause "+i+" : "+causeForChordBanning[i]);
+    for (int i=0; i<causeForChordBanning.length; i++) println("banning for cause "+i+" : "+causeForChordBanning[i]+" ("+banningCauseStr[i]+")");
   }
   // TODO add more subdivisions, then nonchord notes and try to justify them
   // export text file
@@ -491,10 +502,10 @@ void setup() {
   mf.progChange(48);
   for (int i=0; i<nbBeats; i++) {
     for (int j=0; j<nbInstr; j++) {
-      mf.noteOn (j==0?1:0, notes[i][j]+12, 80);
+      if (notes[i][j]!=-1) mf.noteOn (j==0?1:0, notes[i][j]+12, 80);
     }
     for (int j=0; j<nbInstr; j++) {
-      mf.noteOff (j==0?15:0, notes[i][j]+12);
+      if (notes[i][j]!=-1) mf.noteOff (j==0?15:0, notes[i][j]+12);
     }
   }
   try {
