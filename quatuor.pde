@@ -92,17 +92,17 @@ class Tonality {
 void setup() {
   // define instruments
   instruments[0] = new Instrument(24, 70, 12);// cello
-   instruments[1] = new Instrument(36, 75, 19);// viola
-   instruments[2] = new Instrument(43, 93, 12);// violin
-   instruments[3] = new Instrument(43, 93, 12);// violin
-   /*
+  instruments[1] = new Instrument(36, 75, 19);// viola
+  instruments[2] = new Instrument(43, 93, 12);// violin
+  instruments[3] = new Instrument(43, 93, 12);// violin
+  /*
   instruments[0] = new Instrument(10, 50, 24);
-  instruments[1] = new Instrument(20, 60, 19);
-  instruments[2] = new Instrument(30, 70, 12);
-  instruments[3] = new Instrument(35, 75, 10);
-  instruments[4] = new Instrument(40, 80, 7);
-  instruments[5] = new Instrument(45, 85, 6);
-  */
+   instruments[1] = new Instrument(20, 60, 19);
+   instruments[2] = new Instrument(30, 70, 12);
+   instruments[3] = new Instrument(35, 75, 10);
+   instruments[4] = new Instrument(40, 80, 7);
+   instruments[5] = new Instrument(45, 85, 6);
+   */
   // for (int j=0; j<nbInstr; j++) instruments[j] = new Instrument(20+j*7, 30+j*7, 20-j*2);
   // define starting notes
   for (int i=0; i<nbBeats; i++) {
@@ -501,11 +501,19 @@ void setup() {
   MidiFile mf = new MidiFile();
   mf.progChange(48);
   for (int i=0; i<nbBeats; i++) {
+    int notesInChord=0;
     for (int j=0; j<nbInstr; j++) {
-      if (notes[i][j]!=-1) mf.noteOn (j==0?1:0, notes[i][j]+12, 80);
+      if (notes[i][j]!=-1) {
+        notesInChord++;
+        mf.noteOn (notesInChord==1?1:0, notes[i][j]+12, 80);
+      }
     }
+    notesInChord=0;
     for (int j=0; j<nbInstr; j++) {
-      if (notes[i][j]!=-1) mf.noteOff (j==0?15:0, notes[i][j]+12);
+      if (notes[i][j]!=-1) {
+        notesInChord++;
+        mf.noteOff (notesInChord==1?15:0, notes[i][j]+12);
+      }
     }
   }
   try {
