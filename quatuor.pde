@@ -1,5 +1,5 @@
 
-int nbBeats = 32;
+int nbBeats = 16;
 int nbInstr = 4;
 int nbPTotalNotes=128;
 int nbPNotes = 12;// C C# D D# E F F# G G# A A# B
@@ -96,10 +96,14 @@ void setup() {
   instruments[2] = new Instrument(43, 93, 12);// violin
   instruments[3] = new Instrument(43, 93, 12);// violin
   /*
-  for (int j=0; j<nbInstr; j++) {
-   instruments[j] = new Instrument(20+j*7, 30+j*7, 20-j*2);
-   }
+  instruments[0] = new Instrument(10, 50, 24);
+   instruments[1] = new Instrument(20, 60, 19);
+   instruments[2] = new Instrument(30, 70, 12);
+   instruments[3] = new Instrument(35, 75, 10);
+   instruments[4] = new Instrument(40, 80, 7);
+   instruments[5] = new Instrument(45, 85, 6);
    */
+  // for (int j=0; j<nbInstr; j++) instruments[j] = new Instrument(20+j*7, 30+j*7, 20-j*2);
   // define starting notes
   for (int i=0; i<nbBeats; i++) {
     tonality[i] = new Tonality();
@@ -107,7 +111,7 @@ void setup() {
       forceNotes[i][j]=-1;
     }
     // TEST
-    if (random(10)<1) randomInstr = floor(random(4));
+    if (random(10)<1) randomInstr = floor(random(nbInstr));
     int lastForcedNote=-1;
     for (int i2=i-1; i2>=0; i2--) {
       if (forceNotes[i2][randomInstr]!=-1) {
@@ -310,7 +314,7 @@ void setup() {
       for (int i=0; i<nbInstr-1; i++) {
         for (int j=i+1; j<nbInstr; j++) {
           // ban if there is a #9 or positive drop of it somewhere
-          int thisInterval = possibleChords.get(c)[i]-possibleChords.get(c)[j];
+          int thisInterval = abs(possibleChords.get(c)[j]-possibleChords.get(c)[i]);
           if (thisInterval%nbPNotes==1&&thisInterval>1) {
             allow=false;
             causeForChordBanning[2]++;
@@ -582,4 +586,3 @@ void fillWithAllPossibleChords(ArrayList<int[]> possibleChords, int[] currentCho
     }
   }
 }
-
