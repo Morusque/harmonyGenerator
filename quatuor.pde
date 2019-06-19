@@ -1,5 +1,5 @@
 
-int nbBeats = 1024;
+int nbBeats = 256;
 int nbInstr = 4;
 int nbPTotalNotes=128;
 int nbPNotes = 12;// C C# D D# E F F# G G# A A# B
@@ -93,19 +93,25 @@ void setup() {
   size(200, 200);
   while (true) {
     // define instruments
-    int type = floor(random(2));// test
+    int type = 0;
+    if (random(10)<8) type=1;// test
     if (type==0) {// quatuor
       instruments[0] = new Instrument(24, 70, 12);// cello
       instruments[1] = new Instrument(36, 75, 19);// viola
       instruments[2] = new Instrument(43, 93, 12);// violin
       instruments[3] = new Instrument(43, 93, 12);// violin
     }
+    // test from here... >>
     if (type==1) {
-      instruments = new Instrument[floor(random(1, 10))];
+      instruments = new Instrument[floor(random(3, 10))];
       for (int i=0; i<instruments.length; i++) {
         instruments[i] = new Instrument(floor(15+((float)i*50/instruments.length)), floor(60+((float)i*30/instruments.length)), 15);
       }
     }
+    nbInstr = instruments.length;
+    notes = new int[nbBeats][nbInstr];
+    forceNotes = new int[nbBeats][nbInstr];
+    // >> ...to here, test
     /*
    instruments[0] = new Instrument(10, 50, 24);
      instruments[1] = new Instrument(20, 60, 19);
@@ -559,7 +565,7 @@ void setup() {
     // requires a copyrighted piece of code, not included in repository
     // if that part doesn't work, comment from here --------------------
     MidiFile mf = new MidiFile();
-    mf.progChange(48);
+    mf.progChange(floor(random(128)));
     int currentNoteTime = 15;
     for (int i=0; i<nbBeats; i++) {
       int notesInChord=0;
@@ -579,7 +585,7 @@ void setup() {
       }
     }
     try {
-      mf.writeToFile(dataPath("../result"+nf(generated, 5)+".mid"));
+      mf.writeToFile(dataPath("../hgResult"+nf(generated, 5)+".mid"));
       generated++;
     } 
     catch (Exception e) {
