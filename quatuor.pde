@@ -16,7 +16,7 @@ int[] dOrder = {// degree importance order
   6, 2, 5, 1, 3, 4, 0
 };
 // TODO prepare interface for parameters, forced notes, custom tonality/degrees, separate tonality/notes/subdivisions generation
-int randomInstr = floor(random(4));// <- testing purpose
+// int randomInstr = floor(random(4));// <- testing purpose
 int generated =0;
 
 class Tonality {
@@ -94,7 +94,7 @@ void setup() {
   while (true) {
     // define instruments
     int type = 0;
-    if (random(10)<8) type=1;// test
+    type=1;// test
     if (type==0) {// quatuor
       instruments[0] = new Instrument(24, 70, 12);// cello
       instruments[1] = new Instrument(36, 75, 19);// viola
@@ -103,9 +103,9 @@ void setup() {
     }
     // test from here... >>
     if (type==1) {
-      instruments = new Instrument[floor(random(3, 10))];
+      instruments = new Instrument[floor(random(2, 7))];
       for (int i=0; i<instruments.length; i++) {
-        instruments[i] = new Instrument(floor(15+((float)i*50/instruments.length)), floor(60+((float)i*30/instruments.length)), 15);
+        instruments[i] = new Instrument(floor(20+((float)i*30/instruments.length)), floor(70+((float)i*30/instruments.length)), floor(random(5, 17-instruments.length*2)));
       }
     }
     nbInstr = instruments.length;
@@ -142,7 +142,7 @@ void setup() {
     }
     for (int i=0; i<nbBeats; i++) {
       for (int j=0; j<nbInstr; j++) {
-        if (random(8)<1) forceNotes[i][j] = floor((instruments[randomInstr].lowestNoteIncl+instruments[randomInstr].highestNoteExcl)/2+random(random(-12, 12)));
+        if (random(10)<3) forceNotes[i][j] = floor((instruments[j].lowestNoteIncl+instruments[j].highestNoteExcl)/2+random(random(-12, 12)));
       }
     }
     // TEST
@@ -564,28 +564,44 @@ void setup() {
     // export midi file
     // requires a copyrighted piece of code, not included in repository
     // if that part doesn't work, comment from here --------------------
-    MidiFile mf = new MidiFile();
-    mf.progChange(floor(random(128)));
-    int currentNoteTime = 15;
+    MidiFile[] mf = new MidiFile[nbInstr];
+    for (int i=0; i<mf.length; i++) {
+      mf[i] = new MidiFile();
+      mf[i].progChange(floor(random(128)));
+    }
+    int[] currentNoteTimesSequence = new int[1];
+    currentNoteTimesSequence[0] = floor(2*floor(random(1, 5))-1);// TODO this is now here for fun only
+    int currentNoteTime = floor(2*floor(random(1, 5))-1);
+    int[] currentNoteStackTime = new int[nbInstr];
+    for (int i=0; i<currentNoteStackTime.length; i++) currentNoteStackTime[i]=0;
     for (int i=0; i<nbBeats; i++) {
-      int notesInChord=0;
+      // int notesInChord=0;
+      if (random(50)<1||i==0) {
+        currentNoteTimesSequence = new int[floor(random(1, 20))];
+        for (int k=0; k<currentNoteTimesSequence.length; k++) currentNoteTimesSequence[k] = floor(2*floor(random(1, 5))-1);
+      }
+      currentNoteTime = currentNoteTimesSequence[i%currentNoteTimesSequence.length];      
       for (int j=0; j<nbInstr; j++) {
         if (notes[i][j]!=-1) {
-          notesInChord++;
-          mf.noteOn (notesInChord==1?1:0, notes[i][j]+12, 80);
+          // notesInChord++;
+          mf[j].noteOn (1, notes[i][j]+12, 80);//(notesInChord==1?1:0, notes[i][j]+12, 80);
         }
       }
-      notesInChord=0;
-      if (random(5)<1) currentNoteTime = floor(2*floor(random(1, 5))-1);// TODO this is now here for fun only
+      // notesInChord=0;
       for (int j=0; j<nbInstr; j++) {
         if (notes[i][j]!=-1) {
-          notesInChord++;
-          mf.noteOff (notesInChord==1?currentNoteTime:0, notes[i][j]+12);
+          // notesInChord++;
+          mf[j].noteOff (currentNoteTime+currentNoteStackTime[j], notes[i][j]+12);//(notesInChord==1?currentNoteTime:0, notes[i][j]+12);
+          currentNoteStackTime[j]=0;
+        } else {
+          currentNoteStackTime[j]+=currentNoteTime+1;
         }
       }
     }
     try {
-      mf.writeToFile(dataPath("../hgResult"+nf(generated, 5)+".mid"));
+      for (int i=0; i<mf.length; i++) {
+        mf[i].writeToFile(dataPath("../hgResult"+nf(generated, 5)+"_track"+nf(i, 2)+"_.mid"));
+      }
       generated++;
     } 
     catch (Exception e) {
