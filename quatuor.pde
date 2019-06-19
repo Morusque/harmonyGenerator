@@ -1,5 +1,5 @@
 
-int nbBeats = 64;
+int nbBeats = 1024;
 int nbInstr = 4;
 int nbPTotalNotes=128;
 int nbPNotes = 12;// C C# D D# E F F# G G# A A# B
@@ -90,13 +90,14 @@ class Tonality {
 }
 
 void setup() {
+  size(200, 200);
   // define instruments
   instruments[0] = new Instrument(24, 70, 12);// cello
   instruments[1] = new Instrument(36, 75, 19);// viola
   instruments[2] = new Instrument(43, 93, 12);// violin
   instruments[3] = new Instrument(43, 93, 12);// violin
   /*
-  instruments[0] = new Instrument(10, 50, 24);
+   instruments[0] = new Instrument(10, 50, 24);
    instruments[1] = new Instrument(20, 60, 19);
    instruments[2] = new Instrument(30, 70, 12);
    instruments[3] = new Instrument(35, 75, 10);
@@ -111,42 +112,89 @@ void setup() {
       forceNotes[i][j]=-1;
     }
     // TEST
+    /*
     if (random(10)<1) randomInstr = floor(random(nbInstr));
-    int lastForcedNote=-1;
-    for (int i2=i-1; i2>=0; i2--) {
-      if (forceNotes[i2][randomInstr]!=-1) {
-        lastForcedNote=forceNotes[i2][randomInstr];
-        break;
-      }
+     int lastForcedNote=-1;
+     for (int i2=i-1; i2>=0; i2--) {
+     if (forceNotes[i2][randomInstr]!=-1) {
+     lastForcedNote=forceNotes[i2][randomInstr];
+     break;
+     }
+     }
+     forceNotes[i][randomInstr] = (i==0||lastForcedNote==-1)?floor((instruments[randomInstr].lowestNoteIncl+instruments[randomInstr].highestNoteExcl)/2):constrain(floor(lastForcedNote+random(-4, 4)), instruments[randomInstr].lowestNoteIncl, instruments[randomInstr].highestNoteExcl);
+     */
+  }
+  for (int i=0; i<nbBeats; i++) {
+    for (int j=0; j<nbInstr; j++) {
+      if (random(8)<1) forceNotes[i][j] = floor((instruments[randomInstr].lowestNoteIncl+instruments[randomInstr].highestNoteExcl)/2+random(random(-12, 12)));
     }
-    forceNotes[i][randomInstr] = (i==0||lastForcedNote==-1)?floor((instruments[randomInstr].lowestNoteIncl+instruments[randomInstr].highestNoteExcl)/2):constrain(floor(lastForcedNote+random(-4, 4)), instruments[randomInstr].lowestNoteIncl, instruments[randomInstr].highestNoteExcl);
   }
   // TEST
   /*
-  forceNotes[0][0] = 6+24;
-   forceNotes[1][0] = 5+24;
-   forceNotes[2][0] = 12+24;
-   forceNotes[3][0] = 21+24;
-   forceNotes[4][0] = 7+24;
-   forceNotes[5][0] = 14+24;
-   forceNotes[6][0] = 22+24;
-   forceNotes[7][0] = 9+24;
-   forceNotes[8][0] = 17+24;
-   forceNotes[9][0] = 12+24;
-   forceNotes[10][0] = 10+24;
-   forceNotes[11][0] = 17+24;
-   forceNotes[12][0] = 24+24;
-   forceNotes[13][0] = 12+24;
-   forceNotes[14][0] = 17+24;
-   forceNotes[15][0] = 19+24;
-   forceNotes[16][0] = 16+24;
-   forceNotes[17][0] = 19+24;
-   forceNotes[18][0] = 13+24;
-   forceNotes[19][0] = 14+24;
-   forceNotes[20][0] = 21+24;
-   forceNotes[21][0] = 29+24;
-   forceNotes[22][0] = 28+24;
-   forceNotes[23][0] = 26+24;
+  forceNotes[0][3] = 1+48+12;
+   forceNotes[1][3] = 1+48+12;
+   forceNotes[2][3] = 1+48+12;
+   forceNotes[3][3] = 1+48+12;
+   forceNotes[4][3] = 1+48+12;
+   forceNotes[5][3] = 1+48+12;
+   forceNotes[6][3] = 4+48+12;
+   forceNotes[7][3] = 4+48+12;
+   forceNotes[8][3] = 3+48+12;
+   forceNotes[9][3] = 3+48+12;
+   forceNotes[10][3] = 3+48+12;
+   forceNotes[11][3] = 3+48+12;
+   forceNotes[12][3] = 3+48+12;
+   forceNotes[13][3] = 3+48+12;
+   forceNotes[14][3] = 6+48+12;
+   forceNotes[15][3] = 6+48+12;
+   forceNotes[16][3] = 2+48+12;
+   forceNotes[17][3] = 2+48+12;
+   forceNotes[18][3] = 4+48+12;
+   forceNotes[19][3] = 2+48+12;
+   forceNotes[20][3] = 0+48+12;
+   forceNotes[21][3] = 0+48+12;
+   forceNotes[22][3] = -1+48+12;
+   forceNotes[23][3] = -1+48+12;
+   forceNotes[24][3] = -1+48+12;
+   forceNotes[25][3] = -1+48+12;
+   forceNotes[26][3] = -3+48+12;
+   forceNotes[27][3] = -3+48+12;
+   forceNotes[28][3] = -3+48+12;
+   forceNotes[29][3] = -3+48+12;
+   forceNotes[30][3] = -1+48+12;
+   forceNotes[31][3] = -1+48+12;
+   forceNotes[32][3] = 1+48+12;
+   forceNotes[33][3] = 1+48+12;
+   forceNotes[34][3] = 1+48+12;
+   forceNotes[35][3] = 1+48+12;
+   forceNotes[36][3] = 1+48+12;
+   forceNotes[37][3] = 1+48+12;
+   forceNotes[38][3] = 4+48+12;
+   forceNotes[39][3] = 4+48+12;
+   forceNotes[40][3] = 3+48+12;
+   forceNotes[41][3] = 3+48+12;
+   forceNotes[42][3] = 3+48+12;
+   forceNotes[43][3] = 3+48+12;
+   forceNotes[44][3] = 3+48+12;
+   forceNotes[45][3] = 3+48+12;
+   forceNotes[46][3] = 6+48+12;
+   forceNotes[47][3] = 6+48+12;
+   forceNotes[48][3] = 6+48+12;
+   forceNotes[49][3] = 6+48+12;
+   forceNotes[50][3] = 6+48+12;
+   forceNotes[51][3] = 4+48+12;
+   forceNotes[52][3] = 6+48+12;
+   forceNotes[53][3] = 6+48+12;
+   forceNotes[54][3] = 4+48+12;
+   forceNotes[55][3] = 4+48+12;
+   forceNotes[56][3] = 4+48+12;
+   forceNotes[57][3] = 4+48+12;
+   forceNotes[58][3] = 4+48+12;
+   forceNotes[59][3] = 4+48+12;
+   forceNotes[60][3] = 2+48+12;
+   forceNotes[61][3] = 2+48+12;
+   forceNotes[62][3] = 2+48+12;
+   forceNotes[63][3] = 2+48+12;
    */
   for (int i=0; i<nbBeats; i++) {
     for (int j=0; j<nbInstr; j++) {
@@ -353,29 +401,31 @@ void setup() {
         // check the relation with the previous chord
         for (int i=0; i<nbInstr-1; i++) {
           for (int j=i+1; j<nbInstr; j++) {
-            int thisInterval = possibleChords.get(c)[j]-possibleChords.get(c)[i];
-            if (thisInterval%nbPNotes==0||thisInterval%nbPNotes==7) {// if this interval is a drop of a 5th or 8ve
-              if (notes[b-1][j]!=possibleChords.get(c)[j] && (notes[b-1][j]-notes[b-1][i])==thisInterval) {// ban if parallel 5th or 8ves
-                allow=false;
-                causeForChordBanning[5]++;
-              }
-              // check direct movement
-              if (i==0&&j==nbInstr-1) {// if bass and soprano
-                if (degree[b]==0||degree[b]==3||degree[b]==4) {// if strong degree
-                  if (abs(notes[b-1][i]-possibleChords.get(c)[i])>2&&abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if the bass is disjoint and the soprano is disjoint
-                    allow=false;
-                    causeForChordBanning[6]++;
-                  }
-                } else {// if weak degree
-                  if (abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if the soprano is disjoint
-                    allow=false;
-                    causeForChordBanning[6]++;
-                  }
-                }
-              } else {// if other than bass and soprano
-                if (abs(notes[b-1][i]-possibleChords.get(c)[i])>2&&abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if both instruments are disjoint
+            if (notes[b-1][i]!=-1&&notes[b-1][j]!=-1) {
+              int thisInterval = possibleChords.get(c)[j]-possibleChords.get(c)[i];
+              if (thisInterval%nbPNotes==0||thisInterval%nbPNotes==7) {// if this interval is a drop of a 5th or 8ve
+                if (notes[b-1][j]!=possibleChords.get(c)[j] && (notes[b-1][j]-notes[b-1][i])==thisInterval) {// ban if parallel 5th or 8ves
                   allow=false;
-                  causeForChordBanning[6]++;
+                  causeForChordBanning[5]++;
+                }
+                // check direct movement
+                if (i==0&&j==nbInstr-1) {// if bass and soprano
+                  if (degree[b]==0||degree[b]==3||degree[b]==4) {// if strong degree
+                    if (abs(notes[b-1][i]-possibleChords.get(c)[i])>2&&abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if the bass is disjoint and the soprano is disjoint
+                      allow=false;
+                      causeForChordBanning[6]++;
+                    }
+                  } else {// if weak degree
+                    if (abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if the soprano is disjoint
+                      allow=false;
+                      causeForChordBanning[6]++;
+                    }
+                  }
+                } else {// if other than bass and soprano
+                  if (abs(notes[b-1][i]-possibleChords.get(c)[i])>2&&abs(notes[b-1][j]-possibleChords.get(c)[j])>2) {// ban if both instruments are disjoint
+                    allow=false;
+                    causeForChordBanning[6]++;
+                  }
                 }
               }
             }
@@ -481,7 +531,7 @@ void setup() {
       String txtNote ="";
       txtNote += noteToText(notes[i][j]);
       if (notes[i][j]==-1) txtNote+="___";
-      textExp[nbInstr-(j+1)] += txtNote + " | ";
+      textExp[nbInstr-(j+1)] += txtNote + "("+notes[i][j]+")"+" | ";
     }
   }
   textExp[nbInstr] = "";
@@ -509,10 +559,11 @@ void setup() {
       }
     }
     notesInChord=0;
+    int noteTime = floor(pow(2, floor(4+random(-3, 2)))+(floor(random(random(2)))*4)-1);// TODO this is now here for fun only
     for (int j=0; j<nbInstr; j++) {
       if (notes[i][j]!=-1) {
         notesInChord++;
-        mf.noteOff (notesInChord==1?15:0, notes[i][j]+12);
+        mf.noteOff (notesInChord==1?noteTime:0, notes[i][j]+12);
       }
     }
   }
